@@ -4,7 +4,7 @@ import Google from "next-auth/providers/google";
 export const options = {
   session: {
     strategy: "jwt",
-    maxAge: 100,
+    maxAge: 60 * 60,
   },
   providers: [
     Credentials({

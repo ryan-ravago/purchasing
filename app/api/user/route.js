@@ -1,5 +1,6 @@
 import db from "@/app/db/db";
 import { NextResponse } from "next/server";
+import os from "os";
 
 export async function POST(req) {
   const data = await req.json();

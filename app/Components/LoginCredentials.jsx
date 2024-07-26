@@ -75,6 +75,8 @@ export default function LoginCredentials() {
     return "";
   };
 
+  console.log(process.cwd());
+
   return (
     <div className="flex justify-center items-center h-dvh">
       <Card className="w-[340px] md:w-[380px] shadow-lg">

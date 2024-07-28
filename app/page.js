@@ -2,6 +2,7 @@ import Dashboard from "./Components/Dashboard";
 import { getServerSession } from "next-auth";
 import { options } from "./api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
+import LoginCredentials from "./Components/LoginCredentials";
 
 export default async function Home() {
   const session = await getServerSession(options);
@@ -9,7 +10,7 @@ export default async function Home() {
   if (session?.token.id) {
     redirect("/dashboard");
   } else {
-    return <></>;
+    return <LoginCredentials />;
   }
 }
 

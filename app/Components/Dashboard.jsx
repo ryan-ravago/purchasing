@@ -1,4 +1,4 @@
-import SignOutBtn from "./SignOutBtn";
+import SignOutBtn from "../(dashboard)/SignOutBtn";
 import Image from "next/image";
 
 export default async function Dashboard({

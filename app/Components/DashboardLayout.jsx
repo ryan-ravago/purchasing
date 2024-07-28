@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { signOut } from "next-auth/react";
-import MobileNav from "./MobileNav";
-import Sidebar from "./Sidebar";
+import MobileNav from "../(dashboard)/MobileNav";
+import Sidebar from "../(dashboard)/Sidebar";
 import { usePathname } from "next/navigation";
 
 export default function DashboardLayout({ children }) {

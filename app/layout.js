@@ -19,13 +19,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        {session?.token.id ? (
-          // START DASHBOARD LAYOUT
-          <DashboardLayout>{children}</DashboardLayout>
-        ) : (
-          // START DASHBOARD LAYOUT
-          <LoginCredentials />
-        )}
+        {children}
         <Toaster />
       </body>
     </html>

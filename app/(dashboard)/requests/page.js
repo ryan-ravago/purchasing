@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Requests() {
   return (
@@ -9,12 +10,14 @@ export default function Requests() {
       >
         <div className="flex flex-col items-center gap-1 text-center">
           <h3 className="text-2xl font-bold tracking-tight">
-            You have no products
+            You have no item request(s)
           </h3>
           <p className="text-sm text-muted-foreground">
             You can start selling as soon as you add a product.
           </p>
-          <Button className="mt-4">Add Product</Button>
+          <Link href="/requests/add-request" className="mt-4">
+            <Button>Add Request</Button>
+          </Link>
         </div>
       </div>
     </>

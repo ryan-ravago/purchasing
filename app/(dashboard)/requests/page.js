@@ -15,8 +15,8 @@ export default function Requests() {
           <p className="text-sm text-muted-foreground">
             You can start selling as soon as you add a product.
           </p>
-          <Link href="/requests/add-request" className="mt-4">
-            <Button>Add Request</Button>
+          <Link href="/requests/request-items" className="mt-4">
+            <Button>Request item(s)</Button>
           </Link>
         </div>
       </div>

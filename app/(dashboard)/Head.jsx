@@ -17,6 +17,8 @@ export default function Head() {
       return "Staff Requests";
     } else if (pathname === "/my-requests") {
       return "My Requests";
+    } else if (pathname === "/requests/request-items") {
+      return "Request Items";
     }
   };
 
@@ -33,7 +35,7 @@ export default function Head() {
     </div>
   </form> */}
       <div className="flex items-center justify-center md:justify-start">
-        <h1 className="text-2xl font-semibold md:text-2xl">{mainLink()}</h1>
+        <h1 className="text-xl font-semibold ">{mainLink()}</h1>
       </div>
     </div>
   );

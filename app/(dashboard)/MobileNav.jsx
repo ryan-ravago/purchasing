@@ -75,7 +75,7 @@ export default function MobileNav() {
                 onClick={() => setOpen((prev) => !prev)}
               >
                 <ShoppingCart className="h-5 w-5" />
-                Requsts
+                Requests
                 <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                   6
                 </Badge>

@@ -47,7 +47,7 @@ export default function LoginCredentials() {
         ...data,
         redirect: false,
       });
-      console.log(result);
+      // console.log(result);
 
       if (result.error) {
         toast({
@@ -62,7 +62,7 @@ export default function LoginCredentials() {
       dismiss();
       router.refresh();
     } catch (err) {
-      console.log(`Sign in error: ${err}`);
+      // console.log(`Sign in error: ${err}`);
       setIsSignInBtnClicked(false);
       setAreBtnsClicked(false);
     }

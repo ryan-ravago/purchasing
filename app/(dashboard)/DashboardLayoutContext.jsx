@@ -4,15 +4,18 @@ import { useSelectedLayoutSegments } from "next/navigation";
 
 export const UserContext = createContext();
 export const SegmentsContext = createContext();
+export const ServerTimeContext = createContext();
 
-export default function DashboardLayoutContext({ user, children }) {
+export default function DashboardLayoutContext({ user, children, serverTime }) {
   const segments = useSelectedLayoutSegments();
 
   return (
-    <UserContext.Provider value={user}>
-      <SegmentsContext.Provider value={segments}>
-        {children}
-      </SegmentsContext.Provider>
-    </UserContext.Provider>
+    <ServerTimeContext.Provider value={serverTime}>
+      <UserContext.Provider value={user}>
+        <SegmentsContext.Provider value={segments}>
+          {children}
+        </SegmentsContext.Provider>
+      </UserContext.Provider>
+    </ServerTimeContext.Provider>
   );
 }

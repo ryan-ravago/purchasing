@@ -19,16 +19,18 @@ import SignOutBtn from "./SignOutBtn";
 import DashboardLayoutContext from "./DashboardLayoutContext";
 import Image from "next/image";
 import Sidebar from "./Sidebar";
+import { ServerTime } from "../page";
 
 export default async function DashboardLayout({ children }) {
   const session = await getServerSession(options);
+  const serverTime = await ServerTime();
 
   if (session?.token.id) {
     session.token.role = "staff";
-    console.log(session.token);
+    // console.log(session.token);
 
     return (
-      <DashboardLayoutContext user={session.token}>
+      <DashboardLayoutContext user={session.token} serverTime={serverTime}>
         <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
           <div className="hidden border-r bg-muted/40 md:block">
             <div className="flex h-full max-h-screen flex-col gap-2">

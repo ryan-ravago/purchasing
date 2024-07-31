@@ -1,7 +1,10 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { SegmentsContext } from "../../DashboardLayoutContext";
+import {
+  SegmentsContext,
+  ServerTimeContext,
+} from "../../DashboardLayoutContext";
 import BreadCrumbs from "@/app/Components/BreadCrumbs";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,6 +26,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SelectUnit from "./SelectUnit";
 import DatePicker from "./DatePicker";
 import { format, isAfter } from "date-fns";
+import { io } from "socket.io-client";
+import { v4 as uuidv4 } from "uuid";
+
+const socket = io(process.env.NEXT_PUBLIC_SERVER_URL); // server
 
 const options = [
   { label: "Kilogram", value: "kg" },
@@ -31,47 +38,55 @@ const options = [
   { label: "L", value: "liter" },
 ];
 
-// Define a Zod schema for the form
-const schema = z.object({
-  items: z.array(
-    z.object({
-      itemName: z.string().min(1, "Item name is required"),
-      qty: z
-        .string()
-        .transform((val) => {
-          if (val.trim() === "") {
-            return "";
-          } else if (!isNaN(val)) {
-            return Number(val);
-          }
-        })
-        .refine((val) => val !== "", { message: "Quantity is required" })
-        .pipe(z.number().min(1, "Must be greater than 0")),
-      unit: z
-        .string()
-        .refine((value) => value !== "", { message: "Unit is required" })
-        .refine((value) => ["kg", "pcs", "m"].includes(value), {
-          message: "Invalid unit selected",
-        }),
-      dateNeeded: z
-        .string()
-        .min(1, "Date needed is required")
-        .transform((val) => format(val, "yyyy-MM-dd"), {
-          message: "Invalid date format",
-        })
-        // .refine((val) => !isNaN(Date.parse(val)), "Invalid date format")
-        .refine((val) => isAfter(val, format(new Date(), "yyyy-MM-dd")), {
-          message: "At least tomorrow",
-        }),
-      itemNote: z.string().optional(),
-    })
-  ),
-  reqNote: z.string().optional(),
-});
-
 export default function RequestItems() {
   const [date, setDate] = useState();
   const segments = useContext(SegmentsContext);
+  const serverTime = useContext(ServerTimeContext);
+
+  // Define a Zod schema for the form
+  const schema = z.object({
+    items: z.array(
+      z.object({
+        itemName: z.string().min(1, "Item name is required"),
+        qty: z
+          .string()
+          .transform((val) => {
+            if (val.trim() === "") {
+              return "";
+            } else if (!isNaN(val)) {
+              return Number(val);
+            }
+          })
+          .refine((val) => val !== "", { message: "Quantity is required" })
+          .pipe(z.number().min(1, "Must be greater than 0")),
+        unit: z
+          .string()
+          .refine((value) => value !== "", { message: "Unit is required" })
+          .refine((value) => ["kg", "pcs", "m"].includes(value), {
+            message: "Invalid unit selected",
+          }),
+        dateNeeded: z
+          .string()
+          .min(1, "Date needed is required")
+          .transform((val) => format(val, "yyyy-MM-dd"), {
+            message: "Invalid date format",
+          })
+          // .refine((val) => !isNaN(Date.parse(val)), "Invalid date format")
+          .refine(
+            (val) =>
+              isAfter(
+                val,
+                format(new Date(serverTime.serverTime), "yyyy-MM-dd")
+              ),
+            {
+              message: "At least tomorrow",
+            }
+          ),
+        itemNote: z.string().optional(),
+      })
+    ),
+    reqNote: z.string().optional(),
+  });
 
   const {
     control,
@@ -112,7 +127,9 @@ export default function RequestItems() {
     append({ itemName: "", qty: "1", unit: "", dateNeeded: "", itemNote: "" });
 
   const onSubmit = (data) => {
-    console.log("Form Data:", data);
+    // console.log("Form Data:", data);
+    data = { ...data, id: uuidv4() };
+    socket.emit("formRequest", data);
   };
 
   return (

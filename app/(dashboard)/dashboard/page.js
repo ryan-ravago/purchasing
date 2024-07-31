@@ -10,7 +10,6 @@ export default function DashboardPage() {
       >
         <div className="flex flex-col items-center gap-1 text-center">
           <h3 className="text-2xl font-bold tracking-tight">Dashboard</h3>
-
           <Button className="mt-4">Add Product</Button>
         </div>
       </div>

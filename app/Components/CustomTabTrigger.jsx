@@ -19,4 +19,6 @@ const CustomTabTrigger = forwardRef(({ onClick, ...props }, ref) => {
   );
 });
 
+CustomTabTrigger.displayName = "CustomTabTrigger";
+
 export default CustomTabTrigger;

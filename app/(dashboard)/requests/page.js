@@ -5,7 +5,7 @@ import { ServerTime } from "@/app/page";
 import { MyTabs } from "@/app/Components/MyTabs";
 
 export default async function Requests() {
-  // const serverTime = await ServerTime();
+  const serverTime = await ServerTime();
 
   return (
     <>
@@ -17,7 +17,7 @@ export default async function Requests() {
         <Button className="mt-4 mx-auto block">
           <Link href="/requests/request-items">Request item(s)</Link>
         </Button>
-        {/* <FormRequests serverTime={serverTime} /> */}
+        <FormRequests serverTime={serverTime} />
       </div>
     </>
   );

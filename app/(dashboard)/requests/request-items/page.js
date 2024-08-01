@@ -42,8 +42,9 @@ export default function RequestItems() {
   const { toast, dismiss } = useToast();
 
   useEffect(() => {
+    console.log("hi");
     return () => dismiss();
-  }, []);
+  });
 
   // Define a Zod schema for the form
   const schema = z.object({
@@ -133,7 +134,7 @@ export default function RequestItems() {
 
   const onSubmit = async (data) => {
     try {
-      await new Promise((res, rej) => setTimeout(res, 1000));
+      // await new Promise((res, rej) => setTimeout(res, 500));
       data = { ...data, id: uuidv4() };
       socket.emit("formRequestSend", data);
       toast({

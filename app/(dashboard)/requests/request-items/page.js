@@ -1,23 +1,19 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   SegmentsContext,
   ServerTimeContext,
 } from "../../DashboardLayoutContext";
 import BreadCrumbs from "@/app/Components/BreadCrumbs";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarIcon, CirclePlus, X } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  CircleCheckBig,
+  CirclePlus,
+  X,
+} from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useFieldArray, useForm } from "react-hook-form";
@@ -28,6 +24,8 @@ import DatePicker from "./DatePicker";
 import { format, isAfter } from "date-fns";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
+import { useToast } from "@/components/ui/use-toast";
+import { PulseLoader } from "react-spinners";
 
 const socket = io(process.env.NEXT_PUBLIC_SERVER_URL); // server
 
@@ -39,9 +37,13 @@ const options = [
 ];
 
 export default function RequestItems() {
-  const [date, setDate] = useState();
   const segments = useContext(SegmentsContext);
   const serverTime = useContext(ServerTimeContext);
+  const { toast, dismiss } = useToast();
+
+  useEffect(() => {
+    return () => dismiss();
+  }, []);
 
   // Define a Zod schema for the form
   const schema = z.object({
@@ -50,6 +52,7 @@ export default function RequestItems() {
         itemName: z.string().min(1, "Item name is required"),
         qty: z
           .string()
+          .regex(/^[0-9]*$/, "Input must be numeric only")
           .transform((val) => {
             if (val.trim() === "") {
               return "";
@@ -94,7 +97,9 @@ export default function RequestItems() {
     register,
     getValues,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
+    reset,
+    setError,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -126,10 +131,33 @@ export default function RequestItems() {
   const addItem = () =>
     append({ itemName: "", qty: "1", unit: "", dateNeeded: "", itemNote: "" });
 
-  const onSubmit = (data) => {
-    // console.log("Form Data:", data);
-    data = { ...data, id: uuidv4() };
-    socket.emit("formRequest", data);
+  const onSubmit = async (data) => {
+    try {
+      await new Promise((res, rej) => setTimeout(res, 1000));
+      data = { ...data, id: uuidv4() };
+      socket.emit("formRequestSend", data);
+      toast({
+        variant: "ghost",
+        className: "bg-green-500 text-white",
+        title: (
+          <div className="flex items-center gap-x-1">
+            <CircleCheckBig /> <span className="text-base">Submitted!</span>
+          </div>
+        ),
+        description: "Item(s) successfully requested.",
+      });
+      reset();
+    } catch (err) {
+      setError("submit", {
+        type: "manual",
+        message: err.message || "An unknown error occurred.",
+      });
+      toast({
+        variant: "destructive",
+        title: "Submission failed",
+        description: err.message,
+      });
+    }
   };
 
   return (
@@ -241,8 +269,12 @@ export default function RequestItems() {
               </div>
             ))}
           </div>
-          <Button type="submit" className="w-full mt-6">
-            Submit Request
+          <Button type="submit" className="w-full mt-6" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <PulseLoader color="white" className="ms-2" />
+            ) : (
+              "Submit"
+            )}
           </Button>
         </form>
       </div>

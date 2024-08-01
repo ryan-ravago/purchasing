@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { PulseLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
+import { Ban } from "lucide-react";
 
 const LoginFormSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -52,7 +53,11 @@ export default function LoginCredentials() {
       if (result.error) {
         toast({
           variant: "destructive",
-          title: "Invalid Credentials",
+          title: (
+            <div className="flex items-center gap-x-1">
+              <Ban /> <span className="text-base">Sign in failed!</span>
+            </div>
+          ),
           description: "Invalid username or password.",
         });
         setIsSignInBtnClicked(false);

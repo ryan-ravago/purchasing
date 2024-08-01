@@ -8,11 +8,11 @@ export default function FormRequests({ serverTime }) {
   const [formRequests, setFormRequests] = useState([]);
 
   useEffect(() => {
-    socket.on("formRequest", (req) => {
+    socket.on("formRequestReceive", (req) => {
       setFormRequests((prev) => [...prev, req]);
     });
 
-    return () => socket.off("formRequest");
+    return () => socket.off("formRequestReceive");
   }, []);
 
   return (

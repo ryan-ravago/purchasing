@@ -35,9 +35,8 @@ io.on("connection", async (socket) => {
   // const user = await res.json();
   // console.log(user);
 
-  socket.on("formRequest", (req) => {
-    console.log(`Request: ${JSON.stringify(req)}`);
-    io.emit("formRequest", req);
+  socket.on("formRequestSend", (req) => {
+    io.emit("formRequestReceive", req);
   });
 
   socket.on("disconnect", () => {

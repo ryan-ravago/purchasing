@@ -4,7 +4,10 @@ import { signOut } from "next-auth/react";
 
 export default function SignOutBtn() {
   return (
-    <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+    <DropdownMenuItem
+      className="cursor-pointer"
+      onClick={() => signOut({ callbackUrl: "/" })}
+    >
       Logout
     </DropdownMenuItem>
   );

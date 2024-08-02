@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 
+// const data = [];
 const data = [
   {
     id: "m5gr84i9",
@@ -67,6 +68,12 @@ const data = [
     amount: 721,
     status: "failed",
     email: "carmella@hotmail.com",
+  },
+  {
+    id: "ahqecj5p",
+    amount: 722,
+    status: "failed",
+    email: "ryan@hotmail.com",
   },
 ];
 

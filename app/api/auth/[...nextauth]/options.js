@@ -19,7 +19,7 @@ export const options = {
 
         const user = await res.json();
 
-        if (credentials.password === user.password) {
+        if (credentials.password === user?.password) {
           delete user.password;
           return user;
         } else {
@@ -43,12 +43,13 @@ export const options = {
       return token;
     },
     async session(session, token) {
-      const user = {
+      let user = {
         ...session,
         user: {
           ...token,
         },
       };
+
       return user;
     },
   },

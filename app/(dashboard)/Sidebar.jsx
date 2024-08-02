@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, NotepadText, Settings } from "lucide-react";
+import { Divide, Home, NotepadText, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 import Link from "next/link";
@@ -21,15 +21,15 @@ export default function Sidebar() {
 
   return (
     <nav className="grid items-start px-2 text-md font-medium lg:px-4">
-      {user.role === "staff" ? (
+      <Link
+        href="/dashboard"
+        className={`${linkStyles("/dashboard")} py-4 hover:bg-white`}
+      >
+        <Home className="h-4 w-4" />
+        Dashboard
+      </Link>
+      {user.role === "STAFF" ? (
         <>
-          <Link
-            href="/dashboard"
-            className={`${linkStyles("/dashboard")} py-4 hover:bg-white`}
-          >
-            <Home className="h-4 w-4" />
-            Dashboard
-          </Link>
           <Link
             href="/requests"
             className={`${linkStyles("/requests")} py-4 hover:bg-white`}
@@ -48,7 +48,7 @@ export default function Sidebar() {
             Settings
           </Link>
         </>
-      ) : (
+      ) : user.role === "EXECO" ? (
         <>
           <Link
             href="/staff-requests"
@@ -72,6 +72,45 @@ export default function Sidebar() {
             Items
           </Link>
         </>
+      ) : user.role === "HEAD" ? (
+        <>
+          <Link
+            href="/staff-requests"
+            className={`${linkStyles("/staff-requests")} py-4 hover:bg-white`}
+          >
+            <Settings className="h-4 w-4" />
+            Staff Requests
+          </Link>
+        </>
+      ) : user.role === "PURAD" ? (
+        <>
+          <Link
+            href="/items"
+            className={`${linkStyles("/items")} py-4 hover:bg-white`}
+          >
+            <Settings className="h-4 w-4" />
+            Items
+          </Link>
+          <Link
+            href="/staff-requests"
+            className={`${linkStyles("/staff-requests")} py-4 hover:bg-white`}
+          >
+            <Settings className="h-4 w-4" />
+            Staff Requests
+          </Link>
+        </>
+      ) : user.role === "PURCH" ? (
+        <>
+          <Link
+            href="/items"
+            className={`${linkStyles("/items")} py-4 hover:bg-white`}
+          >
+            <Settings className="h-4 w-4" />
+            Items
+          </Link>
+        </>
+      ) : (
+        <div></div>
       )}
     </nav>
   );

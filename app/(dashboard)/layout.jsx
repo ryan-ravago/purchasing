@@ -20,14 +20,33 @@ import DashboardLayoutContext from "./DashboardLayoutContext";
 import Image from "next/image";
 import Sidebar from "./Sidebar";
 import { ServerTime } from "../page";
+import bcrypt from "bcryptjs";
 
 export default async function DashboardLayout({ children }) {
   const session = await getServerSession(options);
   const serverTime = await ServerTime();
 
+  const hpass = await bcrypt.hash("1", 10);
+  console.log(hpass);
+
   if (session?.token.id) {
-    session.token.role = "staff";
-    // console.log(session.token);
+    if (session.token?.email) {
+      const res = await fetch(`${process.env.NEXTAUTH_URL}/api/googleUser`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ gmail: session.token.email }),
+      });
+
+      const data = await res.json();
+      session.token.role = data.priviledgeCode;
+
+      // console.log(session.token);
+    } else {
+      session.token.role = "PURCH";
+      // console.log(session.token);
+    }
 
     return (
       <DashboardLayoutContext user={session.token} serverTime={serverTime}>
@@ -62,7 +81,7 @@ export default async function DashboardLayout({ children }) {
               <Head />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  {session.token?.image ? (
+                  {session.token?.email ? (
                     <Image
                       src={session.token?.image}
                       width={37}
@@ -82,10 +101,21 @@ export default async function DashboardLayout({ children }) {
                   )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
-                  <DropdownMenuItem>Support</DropdownMenuItem>
+                  {session.token?.email ? (
+                    <>
+                      <DropdownMenuLabel>
+                        {session.token.name}
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>{session.token.email}</DropdownMenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <DropdownMenuLabel>
+                        {session.token.username}
+                      </DropdownMenuLabel>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   <SignOutBtn />
                 </DropdownMenuContent>

@@ -1,12 +1,12 @@
 import { dbUsers } from "@/app/db/db";
 import { NextResponse } from "next/server";
-import os from "os";
+import bcrypt from "bcrypt";
 
 export async function POST(req) {
   const data = await req.json();
 
-  const users = await dbUsers({
-    query: `SELECT app.appName, appusr.priviledgeCode, usr.name, userPassword, email
+  const user = await dbUsers({
+    query: `SELECT app.appName, appusr.priviledgeCode AS "privCode", usr.name, userPassword, email
             FROM appusr 
             INNER JOIN app 
               ON appusr.appId = app.appId
@@ -18,5 +18,12 @@ export async function POST(req) {
     values: [data.username],
   });
 
-  return NextResponse.json(users[0]);
+  return NextResponse.json(user);
+}
+
+export async function GET() {
+  const hpass = await bcrypt.hash("123", 10);
+  const match = await bcrypt.compare("13", hpass);
+
+  return NextResponse.json({ hpass, match });
 }

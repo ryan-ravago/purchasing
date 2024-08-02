@@ -4,7 +4,7 @@ export async function POST(req) {
   const data = await req.json();
 
   const googleUserData = await dbUsers({
-    query: `SELECT app.appName, appusr.priviledgeCode 
+    query: `SELECT app.appName, appusr.priviledgeCode
             FROM appusr
             INNER JOIN app
               ON appusr.appId = app.appId

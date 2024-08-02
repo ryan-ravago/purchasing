@@ -20,17 +20,13 @@ import DashboardLayoutContext from "./DashboardLayoutContext";
 import Image from "next/image";
 import Sidebar from "./Sidebar";
 import { ServerTime } from "../page";
-import bcrypt from "bcryptjs";
 
 export default async function DashboardLayout({ children }) {
   const session = await getServerSession(options);
   const serverTime = await ServerTime();
 
-  const hpass = await bcrypt.hash("1", 10);
-  console.log(hpass);
-
   if (session?.token.id) {
-    if (session.token?.email) {
+    if (!session.token?.privCode) {
       const res = await fetch(`${process.env.NEXTAUTH_URL}/api/googleUser`, {
         method: "POST",
         headers: {
@@ -81,7 +77,7 @@ export default async function DashboardLayout({ children }) {
               <Head />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  {session.token?.email ? (
+                  {!session.token?.privCode ? (
                     <Image
                       src={session.token?.image}
                       width={37}
@@ -101,7 +97,7 @@ export default async function DashboardLayout({ children }) {
                   )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {session.token?.email ? (
+                  {!session.token?.privCode ? (
                     <>
                       <DropdownMenuLabel>
                         {session.token.name}

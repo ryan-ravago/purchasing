@@ -19,9 +19,18 @@ export const options = {
 
         const user = await res.json();
 
-        if (credentials.password === user?.password) {
-          delete user.password;
-          return user;
+        if (user.length > 0) {
+          const pwMatch = await bcrypt.compare(
+            credentials.password,
+            user.userPassword
+          );
+
+          if (pwMatch) {
+            delete user.userPassword;
+            return user;
+          } else {
+            return null;
+          }
         } else {
           return null;
         }

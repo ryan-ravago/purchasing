@@ -9,7 +9,6 @@ import {
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { useState } from "react";
 import CustomTabTrigger from "./CustomTabTrigger";
-import TableCustomized from "./TableCustomized";
 
 const status = [
   { statCode: "RQSTD", statDesc: "Requested" },
@@ -35,7 +34,7 @@ export function MyTabs() {
   const [tabVal, setTabVal] = useState(status[0].statCode);
 
   return (
-    <div className="mx-auto">
+    <div className="mx-auto mb-10">
       {/* START TABS */}
       <Tabs value={tabVal}>
         {/* START TAB BUTTONS */}
@@ -73,7 +72,7 @@ export function MyTabs() {
         </TabsList>
         {/* END TAB BUTTONS */}
         {/* START TAB CONTENTS BUTTON */}
-        {status.map((stat, i) => (
+        {/* {status.map((stat, i) => (
           <TabsContent
             key={stat.statCode}
             value={stat.statCode}
@@ -81,7 +80,7 @@ export function MyTabs() {
           >
             <TableCustomized statDesc={stat.statDesc} />
           </TabsContent>
-        ))}
+        ))} */}
         {/* END TAB CONTENTS BUTTON */}
       </Tabs>
       {/* END TABS */}

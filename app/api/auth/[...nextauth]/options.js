@@ -1,5 +1,6 @@
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
+import bcrypt from "bcrypt";
 
 export const options = {
   session: {
@@ -22,12 +23,13 @@ export const options = {
         if (user.length > 0) {
           const pwMatch = await bcrypt.compare(
             credentials.password,
-            user.userPassword
+            user[0].userPassword
           );
 
           if (pwMatch) {
-            delete user.userPassword;
-            return user;
+            delete user[0].userPassword;
+            console.log(user[0]);
+            return user[0];
           } else {
             return null;
           }

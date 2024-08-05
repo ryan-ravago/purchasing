@@ -31,14 +31,11 @@ export default function Sidebar() {
       {user.role === "STAFF" ? (
         <>
           <Link
-            href="/requests"
-            className={`${linkStyles("/requests")} py-4 hover:bg-white`}
+            href="/my-requests"
+            className={`${linkStyles("/my-requests")} py-4 hover:bg-white`}
           >
-            <NotepadText className="h-4 w-4" />
-            Requests
-            <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-              6
-            </Badge>
+            <Settings className="h-4 w-4" />
+            My Requests
           </Link>
           <Link
             href="/settings"

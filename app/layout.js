@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { options } from "./api/auth/[...nextauth]/options";
 import DashboardLayout from "./Components/DashboardLayout";
 import LoginCredentials from "./Components/LoginCredentials";
+import QueryClientProviderComponent from "./Components/QueryClientProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,10 +19,12 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {children}
-        <Toaster />
-      </body>
+      <QueryClientProviderComponent>
+        <body className={inter.className}>
+          {children}
+          <Toaster />
+        </body>
+      </QueryClientProviderComponent>
     </html>
   );
 }

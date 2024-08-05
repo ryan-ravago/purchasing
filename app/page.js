@@ -15,7 +15,7 @@ export async function ServerTime() {
 
 export default async function Home() {
   const session = await getServerSession(options);
-
+  console.log(session);
   if (session?.token.id) {
     redirect("/dashboard");
   } else {

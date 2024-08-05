@@ -6,7 +6,7 @@ export async function POST(req) {
   const data = await req.json();
 
   const user = await dbUsers({
-    query: `SELECT app.appName, appusr.priviledgeCode AS "privCode", usr.name, userPassword, email
+    query: `SELECT appusrId AS id, app.appName, appusr.priviledgeCode AS "privCode", usr.name, userPassword, email
             FROM appusr 
             INNER JOIN app 
               ON appusr.appId = app.appId
@@ -22,8 +22,8 @@ export async function POST(req) {
 }
 
 export async function GET() {
-  const hpass = await bcrypt.hash("123", 10);
-  const match = await bcrypt.compare("13", hpass);
+  const hpass = await bcrypt.hash("1", 10);
+  const match = await bcrypt.compare("1", hpass);
 
   return NextResponse.json({ hpass, match });
 }

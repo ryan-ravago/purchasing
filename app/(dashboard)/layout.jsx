@@ -24,6 +24,7 @@ import { ServerTime } from "../page";
 export default async function DashboardLayout({ children }) {
   const session = await getServerSession(options);
   const serverTime = await ServerTime();
+  console.log(session);
 
   if (session?.token.id) {
     if (!session.token?.privCode) {
@@ -40,7 +41,11 @@ export default async function DashboardLayout({ children }) {
 
       // console.log(session.token);
     } else {
-      session.token.role = "PURCH";
+      if (session.token?.privCode) {
+        session.token.role = session.token?.privCode;
+      } else {
+        session.token.role = "PURCH";
+      }
       // console.log(session.token);
     }
 
@@ -108,7 +113,7 @@ export default async function DashboardLayout({ children }) {
                   ) : (
                     <>
                       <DropdownMenuLabel>
-                        {session.token.username}
+                        {session.token.name}
                       </DropdownMenuLabel>
                     </>
                   )}

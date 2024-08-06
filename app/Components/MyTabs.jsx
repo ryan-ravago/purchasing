@@ -9,6 +9,8 @@ import {
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { useState } from "react";
 import CustomTabTrigger from "./CustomTabTrigger";
+import ServerSideTable from "./ServerSideTable";
+import { columns } from "./TableColumns";
 
 const status = [
   { statCode: "RQSTD", statDesc: "Requested" },
@@ -71,16 +73,17 @@ export function MyTabs() {
           </Carousel>
         </TabsList>
         {/* END TAB BUTTONS */}
+
         {/* START TAB CONTENTS BUTTON */}
-        {/* {status.map((stat, i) => (
+        {status.map((stat, i) => (
           <TabsContent
             key={stat.statCode}
             value={stat.statCode}
             className="mt-8"
           >
-            <TableCustomized statDesc={stat.statDesc} />
+            <ServerSideTable columns={columns} />
           </TabsContent>
-        ))} */}
+        ))}
         {/* END TAB CONTENTS BUTTON */}
       </Tabs>
       {/* END TABS */}

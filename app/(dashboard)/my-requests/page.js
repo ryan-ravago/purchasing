@@ -11,9 +11,6 @@ export default function MyRequests() {
         <Link href="/requests/request-items">Request item(s)</Link>
       </Button>
       <MyTabs />
-      <div className="h-96 mb-10">
-        <ServerSideTable columns={columns} />
-      </div>
     </div>
   );
 }

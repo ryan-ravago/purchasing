@@ -35,11 +35,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Filter from "./Filter";
+import useGlobalDebounce from "./GlobalDebounce";
+import { MoonLoader } from "react-spinners";
 
-const fetchData = async ({ pageIndex, pageSize, sorting }) => {
+const Spinner = ({ loading }) => (
+  <div
+    className={`flex justify-center items-center h-24 ${
+      loading ? "" : "hidden"
+    }`}
+  >
+    <MoonLoader color="#000" size={60} />
+  </div>
+);
+
+const fetchData = async ({
+  pageIndex,
+  pageSize,
+  sorting,
+  globalFilter,
+  columnFilters,
+}) => {
   const sortQuery = sorting
     .map(({ id, desc }) => `${id}:${desc ? "desc" : "asc"}`)
     .join(",");
+
+  const columnFilterParams = columnFilters
+    .map(({ id, value }) => `columnFilter_${id}=${encodeURIComponent(value)}`)
+    .join("&");
 
   const response = await axios.get(
     `${process.env.NEXT_PUBLIC_APP_URL}/api/my-requests`,
@@ -48,6 +71,12 @@ const fetchData = async ({ pageIndex, pageSize, sorting }) => {
         page: pageIndex + 1, // Page parameter adjusted for 1-based indexing
         limit: pageSize,
         sort: sortQuery,
+        globalFilter,
+        ...columnFilterParams.split("&").reduce((acc, param) => {
+          const [key, value] = param.split("=");
+          acc[key] = value;
+          return acc;
+        }, {}),
       },
     }
   );
@@ -59,12 +88,27 @@ const ServerSideTable = ({ columns }) => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sorting, setSorting] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
+  const [firstRender, setFirstRender] = useState(true);
+  const [renderTimes, setRenderTimes] = useState(0);
+
+  const debouncedGlobalFilter = useGlobalDebounce(globalFilter, 500); // Debounce delay of 300ms
 
   const { data, isLoading, error, isFetching } = useQuery({
-    queryKey: ["data", { pageIndex, pageSize, sorting }],
-    queryFn: () => fetchData({ pageIndex, pageSize, sorting }),
+    queryKey: [
+      "data",
+      { pageIndex, pageSize, sorting, debouncedGlobalFilter, columnFilters },
+    ],
+    queryFn: () =>
+      fetchData({
+        pageIndex,
+        pageSize,
+        sorting,
+        globalFilter: debouncedGlobalFilter,
+        columnFilters,
+      }),
     keepPreviousData: true,
   });
 
@@ -74,32 +118,38 @@ const ServerSideTable = ({ columns }) => {
     state: {
       pagination: { pageIndex, pageSize },
       sorting,
-      // columnFilters,
-      // columnVisibility,
+      globalFilter,
+      columnFilters,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     manualPagination: true,
     manualSorting: true,
+    manualFilters: true,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     pageCount: data?.totalPages || 0,
-    getFilteredRowModel: getFilteredRowModel(),
     onPaginationChange: (updater) => {
       setPageIndex(updater.pageIndex);
       setPageSize(updater.pageSize);
     },
+    onGlobalFilterChange: (value) => setGlobalFilter,
   });
+
+  // console.log("loading", isLoading);
+  // console.log("fetching", isFetching);
 
   useEffect(() => {
     // Sync pagination state with table state when data updates
     setPageIndex(table.getState().pagination.pageIndex);
     setPageSize(table.getState().pagination.pageSize);
+    setFirstRender(false);
+    setRenderTimes((prev) => prev + 1);
   }, [data]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (firstRender && renderTimes === 0) return <Spinner loading={isLoading} />;
   if (error) {
     console.log(error);
     return <div>Error loading data</div>;
@@ -107,7 +157,16 @@ const ServerSideTable = ({ columns }) => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-2">
+      <Input
+        type="text"
+        value={globalFilter}
+        onChange={(e) => setGlobalFilter(e.target.value)}
+        className="w-64 mb-3"
+        placeholder="Search..."
+      />
+      <hr className="mb-3" />
+      {/* <Spinner loading={isFetching} /> */}
+      <div className="flex items-center justify-between mb-5">
         <div className="space-x-1">
           <Button
             variant="outline"
@@ -155,7 +214,7 @@ const ServerSideTable = ({ columns }) => {
           </Button>
         </div>
         <div className="flex items-center space-x-1">
-          <span>
+          <span className="text-sm">
             Page{" "}
             <strong>
               {pageIndex + 1} of {table.getPageCount()}
@@ -193,7 +252,7 @@ const ServerSideTable = ({ columns }) => {
             </SelectContent>
           </Select>
         </div>
-        {isFetching && <span className="text-sm"> Loading...</span>}
+        {/* {isFetching && <span className="text-sm"> Loading...</span>} */}
       </div>
       <Card>
         <Table>
@@ -203,20 +262,37 @@ const ServerSideTable = ({ columns }) => {
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
+                    className="border border-gray-200 bg-gray-700 text-white"
+                    onClick={(e) => {
+                      if (
+                        e.target.tagName !== "INPUT" &&
+                        e.target.tagName !== "BUTTON"
+                      ) {
+                        header.column.getToggleSortingHandler()(e);
+                      }
+                    }}
                   >
-                    <div className="flex justify-between items-center">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
+                    <div className="my-3">
+                      <>
+                        <div className="flex justify-between items-center">
+                          {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                      {/* Sorting indicators */}
-                      {{
-                        asc: <ArrowUpAz />,
-                        desc: <ArrowUpZA />,
-                      }[header.column.getIsSorted()] ?? null}
+                          {/* CODE FOR UP AND DOWN SORTING */}
+                          {
+                            {
+                              asc: <ArrowUpAz />,
+                              desc: <ArrowUpZA />,
+                            }[header.column.getIsSorted() ?? null]
+                          }
+                        </div>
+                        {header.column.getCanFilter() ? (
+                          <div className="mt-2 w-full flex-none">
+                            <Filter column={header.column} table={table} />
+                          </div>
+                        ) : null}
+                      </>
                     </div>
                   </TableHead>
                 ))}
@@ -240,6 +316,15 @@ const ServerSideTable = ({ columns }) => {
                   ))}
                 </TableRow>
               ))
+            ) : isFetching ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  <Spinner loading={isLoading} />
+                </TableCell>
+              </TableRow>
             ) : (
               <TableRow>
                 <TableCell

@@ -30,12 +30,18 @@ async function getDataFromDatabase(
     columnFilters.forEach(({ id, value }) => {
       if (id === "freq_date") {
         id = "req_dt";
-      }
 
-      if (whereClause) {
-        whereClause += ` AND ${id} LIKE ?`;
+        if (whereClause) {
+          whereClause += ` AND DATE_FORMAT(${id}, '%M %d, %Y') LIKE ?`;
+        } else {
+          whereClause = `WHERE DATE_FORMAT(${id}, '%M %d, %Y') LIKE ?`;
+        }
       } else {
-        whereClause = `WHERE ${id} LIKE ?`;
+        if (whereClause) {
+          whereClause += ` AND ${id} LIKE ?`;
+        } else {
+          whereClause = `WHERE ${id} LIKE ?`;
+        }
       }
       values.push(`%${value}%`);
     });
@@ -47,10 +53,6 @@ async function getDataFromDatabase(
     values,
   });
 
-  // console.log(whereClause);
-  // console.log(orderByClause);
-  // console.log(...values);
-
   const total = countResults[0].total;
 
   // Query to get the paginated data
@@ -61,6 +63,10 @@ async function getDataFromDatabase(
             ${orderByClause} LIMIT ? OFFSET ?`, // replace with your table name
     values: [...values, limit, offset],
   });
+
+  // console.log(whereClause ? whereClause : "");
+  // console.log(orderByClause);
+  // console.log(values);
 
   return { data, total };
 }
@@ -82,7 +88,7 @@ export async function GET(request) {
   searchParams.forEach((value, key) => {
     if (key.startsWith("columnFilter_")) {
       const columnId = key.replace("columnFilter_", "");
-      columnFilters.push({ id: columnId, value });
+      columnFilters.push({ id: columnId, value: decodeURI(value) });
     }
   });
 

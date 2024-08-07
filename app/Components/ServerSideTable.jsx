@@ -147,7 +147,7 @@ const ServerSideTable = ({ columns }) => {
     setPageSize(table.getState().pagination.pageSize);
     setFirstRender(false);
     setRenderTimes((prev) => prev + 1);
-  }, [data]);
+  }, [table]);
 
   if (firstRender && renderTimes === 0) return <Spinner loading={isLoading} />;
   if (error) {
@@ -156,17 +156,19 @@ const ServerSideTable = ({ columns }) => {
   }
 
   return (
-    <div>
-      <Input
-        type="text"
-        value={globalFilter}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        className="w-64 mb-3"
-        placeholder="Search..."
-      />
+    <>
+      <div className="flex items-center justify-center lg:justify-start mb-3 mt-10">
+        <Input
+          type="text"
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className="w-64"
+          placeholder="Search..."
+        />
+      </div>
       <hr className="mb-3" />
       {/* <Spinner loading={isFetching} /> */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex flex-col lg:flex-row gap-2 items-center justify-between mb-5">
         <div className="space-x-1">
           <Button
             variant="outline"
@@ -213,24 +215,24 @@ const ServerSideTable = ({ columns }) => {
             {">>"}
           </Button>
         </div>
-        <div className="flex items-center space-x-1">
-          <span className="text-sm">
+        <div className="flex flex-col gap-2 sm:gap-0 sm:flex-row items-center space-x-1">
+          <span className="text-sm flex items-center">
             Page{" "}
             <strong>
               {pageIndex + 1} of {table.getPageCount()}
             </strong>
             | Go to page:
-          </span>
-          <span>
-            <Input
-              type="number"
-              value={pageIndex + 1}
-              onChange={(e) => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                setPageIndex(page);
-              }}
-              style={{ width: "100px" }}
-            />
+            <span className="ml-1">
+              <Input
+                type="number"
+                value={pageIndex + 1}
+                onChange={(e) => {
+                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                  setPageIndex(page);
+                }}
+                style={{ width: "80px" }}
+              />
+            </span>
           </span>
           <Select
             value={pageSize}
@@ -238,7 +240,7 @@ const ServerSideTable = ({ columns }) => {
               setPageSize(Number(value));
             }}
           >
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-[130px]">
               <SelectValue placeholder="Select size of page" />
             </SelectTrigger>
             <SelectContent>
@@ -254,15 +256,15 @@ const ServerSideTable = ({ columns }) => {
         </div>
         {/* {isFetching && <span className="text-sm"> Loading...</span>} */}
       </div>
-      <Card>
-        <Table>
+      <Card className="overflow-x-auto">
+        <Table className="min-w-[500px]">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="border border-gray-200 bg-gray-700 text-white"
+                    className="bg-gray-700 text-white px-4"
                     onClick={(e) => {
                       if (
                         e.target.tagName !== "INPUT" &&
@@ -338,7 +340,7 @@ const ServerSideTable = ({ columns }) => {
           </TableBody>
         </Table>
       </Card>
-    </div>
+    </>
   );
 };
 

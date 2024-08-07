@@ -27,6 +27,7 @@ export default async function DashboardLayout({ children }) {
   console.log(session);
 
   if (session?.token.id) {
+    // logging in using google
     if (!session.token?.privCode) {
       const res = await fetch(`${process.env.NEXTAUTH_URL}/api/googleUser`, {
         method: "POST",
@@ -38,16 +39,16 @@ export default async function DashboardLayout({ children }) {
 
       const data = await res.json();
       session.token.role = data.priviledgeCode;
-
-      // console.log(session.token);
     } else {
+      // logging in using credentials
       if (session.token?.privCode) {
-        session.token.role = session.token?.privCode;
+        // user is authorized to this app because privCode has a valid value
+        session.token.role = session.token.privCode;
       } else {
-        session.token.role = "PURCH";
+        redirect("/");
       }
-      // console.log(session.token);
     }
+    console.log(session.token);
 
     return (
       <DashboardLayoutContext user={session.token} serverTime={serverTime}>

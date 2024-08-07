@@ -34,6 +34,7 @@ export default function Filter({ column, table }) {
 
   const columnFilterValue = column.getFilterValue();
   const isNumber = typeof firstValue === "number";
+  const uniqueValues = column.getFacetedUniqueValues();
 
   // const sortedUniqueValues = useMemo(
   //   () =>
@@ -44,9 +45,8 @@ export default function Filter({ column, table }) {
   // );
   // Compute sorted unique values
   const sortedUniqueValues = useMemo(
-    () =>
-      isNumber ? [] : Array.from(column.getFacetedUniqueValues().keys()).sort(),
-    [column.getFacetedUniqueValues(), isNumber, column] // Simplified dependency array
+    () => (isNumber ? [] : Array.from(uniqueValues.keys()).sort()),
+    [uniqueValues, isNumber] // Simplified dependency array
   );
 
   return typeof firstValue === "number" ? (

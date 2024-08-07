@@ -79,7 +79,7 @@ export function MyTabs() {
           <TabsContent
             key={stat.statCode}
             value={stat.statCode}
-            className="mt-8"
+            className="mt-8 "
           >
             <ServerSideTable columns={columns} />
           </TabsContent>

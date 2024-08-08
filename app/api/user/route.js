@@ -1,11 +1,11 @@
-import { dbUsers } from "@/app/db/db";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
+import db, { dbConnectionUsers } from "@/app/db/db";
 
 export async function POST(req) {
   const data = await req.json();
 
-  const user = await dbUsers({
+  const user = await db({
     query: `SELECT appusrId AS id, app.appName, appusr.priviledgeCode AS "privCode", usr.name, userPassword, email
             FROM appusr 
             INNER JOIN app 
@@ -16,6 +16,7 @@ export async function POST(req) {
               AND appusr.isActive = 1 
               and app.appId IN('PURJO');`,
     values: [data.username],
+    dbConnectionUsers,
   });
 
   return NextResponse.json(user);

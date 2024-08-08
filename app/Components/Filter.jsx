@@ -33,20 +33,13 @@ export default function Filter({ column, table }) {
     .flatRows[0]?.getValue(column.id);
 
   const columnFilterValue = column.getFilterValue();
-  const isNumber = typeof firstValue === "number";
-  const uniqueValues = column.getFacetedUniqueValues();
 
-  // const sortedUniqueValues = useMemo(
-  //   () =>
-  //     typeof firstValue === "number"
-  //       ? []
-  //       : Array.from(column.getFacetedUniqueValues().keys()).sort(),
-  //   [column.getFacetedUniqueValues(), column, firstValue]
-  // );
-  // Compute sorted unique values
   const sortedUniqueValues = useMemo(
-    () => (isNumber ? [] : Array.from(uniqueValues.keys()).sort()),
-    [uniqueValues, isNumber] // Simplified dependency array
+    () =>
+      typeof firstValue === "number"
+        ? []
+        : Array.from(column.getFacetedUniqueValues().keys()).sort(),
+    [column.getFacetedUniqueValues()]
   );
 
   return typeof firstValue === "number" ? (

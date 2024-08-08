@@ -17,17 +17,13 @@ export default function DebouncedInput({
     const timeout = setTimeout(() => onChange(value), debounce);
 
     return () => clearTimeout(timeout);
-  }, [value, debounce, onChange]);
+  }, [value]);
 
   return (
     <Input
       {...props}
       value={value}
-      onChange={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setValue(e.target.value);
-      }}
+      onChange={(e) => setValue(e.target.value)}
       className="text-black w-full"
     />
   );

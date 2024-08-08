@@ -13,23 +13,35 @@ import ServerSideTable from "./ServerSideTable";
 import { columns } from "./TableColumns";
 
 const status = [
-  { statCode: "RQSTD", statDesc: "Requested" },
-  { statCode: "PNDH", statDesc: "Pending on head" },
-  { statCode: "APRH", statDesc: "Approved by head" },
-  { statCode: "RJCH", statDesc: "Rejected by head" },
-  { statCode: "PNDP", statDesc: "Pending on purchasing" },
-  { statCode: "APRP", statDesc: "Approved by purchasing" },
-  { statCode: "RJCP", statDesc: "Rejected by purchasing" },
-  { statCode: "PNDE", statDesc: "Pending on EXECOM" },
-  { statCode: "APRE", statDesc: "Approved by EXECOM" },
-  { statCode: "RJCE", statDesc: "Rejected by EXECOM" },
-  { statCode: "INPRG", statDesc: "In-progress" },
-  { statCode: "CMPLT", statDesc: "Completed" },
-  { statCode: "CNCLD", statDesc: "Cancelled" },
-  { statCode: "RQSTDI", statDesc: "Requested Item" },
-  { statCode: "CMPLTDI", statDesc: "Completed Item" },
-  { statCode: "CNCLDI", statDesc: "Cancelled Item" },
-  { statCode: "ONGNI", statDesc: "On-going Item" },
+  // { statCode: "RQSTD", statDesc: "Requested" },
+  { statCode: "PNDH", statDesc: "Pending on head", reqStatCode: "Yellow" },
+  { statCode: "APRH", statDesc: "Approved by head", reqStatCode: "Indigo" },
+  { statCode: "RJCH", statDesc: "Rejected by head", reqStatCode: "Yellow" },
+  {
+    statCode: "PNDP",
+    statDesc: "Pending on purchasing",
+    reqStatCode: "Teal",
+  },
+  {
+    statCode: "APRP",
+    statDesc: "Approved by purchasing",
+    reqStatCode: "Teal",
+  },
+  {
+    statCode: "RJCP",
+    statDesc: "Rejected by purchasing",
+    reqStatCode: "Teal",
+  },
+  { statCode: "PNDE", statDesc: "Pending on EXECOM", reqStatCode: "Yellow" },
+  { statCode: "APRE", statDesc: "Approved by EXECOM", reqStatCode: "Yellow" },
+  { statCode: "RJCE", statDesc: "Rejected by EXECOM", reqStatCode: "Yellow" },
+  { statCode: "INPRG", statDesc: "In-progress", reqStatCode: "Yellow" },
+  { statCode: "CMPLT", statDesc: "Completed", reqStatCode: "Yellow" },
+  { statCode: "CNCLD", statDesc: "Cancelled", reqStatCode: "Yellow" },
+  { statCode: "RQSTDI", statDesc: "Requested Item", reqStatCode: "Yellow" },
+  { statCode: "CMPLTDI", statDesc: "Completed Item", reqStatCode: "Yellow" },
+  { statCode: "CNCLDI", statDesc: "Cancelled Item", reqStatCode: "Yellow" },
+  { statCode: "ONGNI", statDesc: "On-going Item", reqStatCode: "Yellow" },
 ];
 
 export function MyTabs() {
@@ -81,7 +93,7 @@ export function MyTabs() {
             value={stat.statCode}
             className="mt-8 "
           >
-            <ServerSideTable columns={columns} />
+            <ServerSideTable columns={columns} reqStatCode={stat.reqStatCode} />
           </TabsContent>
         ))}
         {/* END TAB CONTENTS BUTTON */}

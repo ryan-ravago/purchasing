@@ -7,9 +7,6 @@ import Link from "next/link";
 export default function MyRequests() {
   return (
     <div>
-      <Button className="mb-4 ms-auto block">
-        <Link href="/requests/request-items">Request item(s)</Link>
-      </Button>
       <MyTabs />
     </div>
   );

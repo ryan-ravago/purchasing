@@ -19,12 +19,14 @@ import {
 import {
   Bell,
   CircleUser,
+  Heading1,
   Home,
   LineChart,
   Menu,
   Package,
   Package2,
   Search,
+  Settings,
   ShoppingCart,
   Users,
 } from "lucide-react";
@@ -59,26 +61,23 @@ export default function MobileNav() {
           <SheetDescription></SheetDescription>
         </SheetHeader>
         <nav className="grid gap-2 text-lg font-medium">
-          {user.role === "staff" ? (
+          <Link
+            href="/dashboard"
+            className={linkStyles("/dashboard")}
+            onClick={() => setOpen((prev) => !prev)}
+          >
+            <Home className="h-5 w-5" />
+            Dashboard
+          </Link>
+          {user.role === "STAFF" ? (
             <>
               <Link
-                href="/dashboard"
-                className={linkStyles("/dashboard")}
+                href="/my-requests"
+                className={linkStyles("/my-requests")}
                 onClick={() => setOpen((prev) => !prev)}
               >
-                <Home className="h-5 w-5" />
-                Dashboard
-              </Link>
-              <Link
-                href="/requests"
-                className={linkStyles("/requests")}
-                onClick={() => setOpen((prev) => !prev)}
-              >
-                <ShoppingCart className="h-5 w-5" />
-                Requests
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  6
-                </Badge>
+                <LineChart className="h-5 w-5" />
+                My Requests
               </Link>
               <Link
                 href="/settings"
@@ -89,14 +88,14 @@ export default function MobileNav() {
                 Settings
               </Link>
             </>
-          ) : (
+          ) : user.role === "EXECO" ? (
             <>
               <Link
                 href="/staff-requests"
                 className={linkStyles("/staff-requests")}
                 onClick={() => setOpen((prev) => !prev)}
               >
-                <Users className="h-5 w-5" />
+                <Settings className="h-5 w-5" />
                 Staff Requests
               </Link>
               <Link
@@ -116,6 +115,49 @@ export default function MobileNav() {
                 Items
               </Link>
             </>
+          ) : user.role === "HEAD" ? (
+            <>
+              <Link
+                href="/staff-requests"
+                className={linkStyles("/staff-requests")}
+                onClick={() => setOpen((prev) => !prev)}
+              >
+                <Settings className="h-5 w-5" />
+                Staff Requests
+              </Link>
+            </>
+          ) : user.role === "PURAD" ? (
+            <>
+              <Link
+                href="/items"
+                className={linkStyles("/items")}
+                onClick={() => setOpen((prev) => !prev)}
+              >
+                <LineChart className="h-5 w-5" />
+                Items
+              </Link>
+              <Link
+                href="/staff-requests"
+                className={linkStyles("/staff-requests")}
+                onClick={() => setOpen((prev) => !prev)}
+              >
+                <Settings className="h-5 w-5" />
+                Staff Requests
+              </Link>
+            </>
+          ) : user.role === "PURCH" ? (
+            <>
+              <Link
+                href="/items"
+                className={linkStyles("/items")}
+                onClick={() => setOpen((prev) => !prev)}
+              >
+                <LineChart className="h-5 w-5" />
+                Items
+              </Link>
+            </>
+          ) : (
+            <div></div>
           )}
         </nav>
         <div className="mt-auto">

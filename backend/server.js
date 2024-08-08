@@ -46,8 +46,8 @@ io.on("connection", async (socket) => {
 
 app.get("/api/server-time", (req, res) => {
   let serverTime = new Date(); // ISO format is common and easy to work with
-  let serverTimef = format(serverTime, "MMMM dd, yyyy HH:mm");
-  res.json({ serverTime: serverTimef });
+  // let serverTimef = format(serverTime, "MMMM dd, yyyy HH:mm");
+  res.json({ serverTime });
 });
 
 // Start the server

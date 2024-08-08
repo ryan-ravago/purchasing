@@ -17,7 +17,7 @@ export default function Head() {
       return "Staff Requests";
     } else if (pathname === "/my-requests") {
       return "My Requests";
-    } else if (pathname === "/requests/request-items") {
+    } else if (pathname === "/my-requests/request-items") {
       return "Request Items";
     }
   };

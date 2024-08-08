@@ -1,5 +1,4 @@
-// app/api/data/route.js
-import db from "@/app/db/db";
+import db, { dbConnection } from "@/app/db/db";
 
 async function getDataFromDatabase(
   page,
@@ -9,6 +8,7 @@ async function getDataFromDatabase(
   columnFilters
 ) {
   const offset = page * limit;
+  const conn = await dbConnection();
 
   let orderByClause = "ORDER BY req_dt";
   if (sortOptions.length > 0) {
@@ -51,6 +51,7 @@ async function getDataFromDatabase(
   const countResults = await db({
     query: `SELECT COUNT(*) AS total FROM request ${whereClause}`,
     values,
+    connection: conn,
   });
 
   const total = countResults[0].total;
@@ -62,6 +63,7 @@ async function getDataFromDatabase(
             ${whereClause}
             ${orderByClause} LIMIT ? OFFSET ?`, // replace with your table name
     values: [...values, limit, offset],
+    connection: conn,
   });
 
   // console.log(whereClause ? whereClause : "");
@@ -77,6 +79,7 @@ export async function GET(request) {
   const limit = parseInt(searchParams.get("limit") || "10", 10);
   const sort = searchParams.get("sort");
   const globalFilter = searchParams.get("globalFilter");
+  const reqStatCode = searchParams.get("reqStatCode");
 
   let sortOptions = [];
   if (sort) {

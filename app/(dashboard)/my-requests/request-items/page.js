@@ -1,4 +1,4 @@
-import RequestItems from "../../my-requests/RequestItems";
+import RequestItems from "./RequestItems";
 
 export default function page() {
   return <RequestItems />;

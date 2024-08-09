@@ -51,7 +51,7 @@ export const columns = [
             <DropdownMenuSeparator />
             <DropdownMenuItem>View</DropdownMenuItem>
             <DropdownMenuItem className="text-destructive">
-              Delete
+              Cancel
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

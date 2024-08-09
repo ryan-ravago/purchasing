@@ -4,6 +4,7 @@ import db, { dbConnectionUsers } from "@/app/db/db";
 
 export async function POST(req) {
   const data = await req.json();
+  const connection = await dbConnectionUsers();
 
   const user = await db({
     query: `SELECT appusrId AS id, app.appName, appusr.priviledgeCode AS "privCode", usr.name, userPassword, email
@@ -16,7 +17,7 @@ export async function POST(req) {
               AND appusr.isActive = 1 
               and app.appId IN('PURJO');`,
     values: [data.username],
-    dbConnectionUsers,
+    connection,
   });
 
   return NextResponse.json(user);

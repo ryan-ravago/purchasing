@@ -5,7 +5,7 @@ import {
   SegmentsContext,
   ServerTimeContext,
   UserContext,
-} from "../DashboardLayoutContext";
+} from "../../DashboardLayoutContext";
 import BreadCrumbs from "@/app/Components/BreadCrumbs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,10 +24,9 @@ import SelectUnit from "./SelectUnit";
 import DatePicker from "./DatePicker";
 import { format, isAfter } from "date-fns";
 import { io } from "socket.io-client";
-import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/components/ui/use-toast";
 import { PulseLoader } from "react-spinners";
-import shortUUID from "short-uuid";
+import crypto from "crypto";
 
 const socket = io(process.env.NEXT_PUBLIC_SERVER_URL); // server
 
@@ -43,10 +42,6 @@ export default function RequestItems() {
   const serverTime = useContext(ServerTimeContext);
   const user = useContext(UserContext);
 
-  // Short UUID Generator
-  const translator = shortUUID();
-  const uniqueId = translator.new();
-
   const { toast, dismiss } = useToast();
 
   // useEffect(() => {
@@ -58,7 +53,6 @@ export default function RequestItems() {
     reqId: z.string(),
     items: z.array(
       z.object({
-        itemId: z.string(),
         itemName: z.string().min(1, "Item name is required"),
         qty: z
           .string()
@@ -115,10 +109,9 @@ export default function RequestItems() {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      reqId: uuidv4(),
+      reqId: "",
       items: [
         {
-          itemId: uniqueId,
           itemName: "",
           qty: "1",
           unit: "",
@@ -146,7 +139,6 @@ export default function RequestItems() {
 
   const addItem = () =>
     append({
-      itemId: uniqueId,
       itemName: "",
       qty: "1",
       unit: "",
@@ -155,12 +147,41 @@ export default function RequestItems() {
     });
 
   const onSubmit = async (data) => {
+    const generateShortUidWithDate = () => {
+      // Get the current date components
+      const now = new Date();
+      const yearSuffix = now.getFullYear().toString().slice(-2); // Last 2 digits of the year
+      const month = String(now.getMonth() + 1).padStart(2, "0"); // Month (01 to 12)
+      const day = String(now.getDate()).padStart(2, "0"); // Day (01 to 31)
+
+      // Generate a random string of 6 characters
+      const randomPart = crypto.randomBytes(3).toString("hex"); // 3 bytes = 6 hex characters
+
+      // Combine the date components and random part
+      // Ensure the total length is 12 characters
+      return `${yearSuffix}${month}${day}${randomPart}`;
+    };
+
     try {
-      // await new Promise((res, rej) => setTimeout(res, 500));
-      data = { ...data };
+      data = { ...data, reqId: generateShortUidWithDate() };
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/request-item`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      const resJson = await res.json();
+      console.log(resJson);
+
       socket.emit("formRequestSend", data);
       console.log(data);
       reset();
+
       toast({
         variant: "ghost",
         className: "bg-green-500 text-white",

@@ -8,9 +8,9 @@ async function getDataFromDatabase(
   columnFilters
 ) {
   const offset = page * limit;
-  const conn = await dbConnection();
+  const connection = await dbConnection();
 
-  let orderByClause = "ORDER BY req_dt";
+  let orderByClause = "ORDER BY req_dt DESC";
   if (sortOptions.length > 0) {
     orderByClause = `ORDER BY ${
       sortOptions[0] === "freq_date" ? "req_dt" : sortOptions[0]
@@ -51,7 +51,7 @@ async function getDataFromDatabase(
   const countResults = await db({
     query: `SELECT COUNT(*) AS total FROM request ${whereClause}`,
     values,
-    connection: conn,
+    connection,
   });
 
   const total = countResults[0].total;
@@ -63,12 +63,13 @@ async function getDataFromDatabase(
             ${whereClause}
             ${orderByClause} LIMIT ? OFFSET ?`, // replace with your table name
     values: [...values, limit, offset],
-    connection: conn,
+    connection,
   });
 
   // console.log(whereClause ? whereClause : "");
   // console.log(orderByClause);
   // console.log(values);
+  await connection.end();
 
   return { data, total };
 }

@@ -2,7 +2,7 @@ import db from "@/app/db/db";
 import { dbConnectionUsers } from "@/app/db/db";
 
 export async function POST(req) {
-  const conn = await dbConnectionUsers();
+  const connection = await dbConnectionUsers();
   const data = await req.json();
 
   const googleUserData = await db({
@@ -14,8 +14,10 @@ export async function POST(req) {
               and appusr.isactive = 1
               and app.appId IN('PURJO')`,
     values: [data.gmail],
-    connection: conn,
+    connection,
   });
+
+  await connection.end();
 
   return Response.json(googleUserData[0]);
 }

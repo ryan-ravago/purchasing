@@ -25,7 +25,6 @@ export const dbConnection = async () => {
 const db = async ({ query, values = [], connection }) => {
   try {
     const [results] = await connection.execute(query, values);
-    connection.end();
     return results;
   } catch (error) {
     throw Error(error.message);

@@ -1,10 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { getServerSession } from "next-auth";
-import { options } from "./api/auth/[...nextauth]/options";
-import DashboardLayout from "./Components/DashboardLayout";
-import LoginCredentials from "./Components/LoginCredentials";
 import QueryClientProviderComponent from "./Components/QueryClientProvider";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -15,8 +11,6 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const session = await getServerSession(options);
-
   return (
     <html lang="en">
       <QueryClientProviderComponent>

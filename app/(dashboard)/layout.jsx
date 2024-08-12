@@ -21,10 +21,24 @@ import Image from "next/image";
 import Sidebar from "./Sidebar";
 import { ServerTime } from "../page";
 
+async function fetchUserWithApprover(gmail) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/user-with-approver`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ gmail }),
+    }
+  );
+  const userWApprover = await res.json();
+  return userWApprover;
+}
+
 export default async function DashboardLayout({ children }) {
   const session = await getServerSession(options);
   const serverTime = await ServerTime();
-  console.log(session);
 
   if (session?.token.id) {
     // logging in using google
@@ -48,7 +62,12 @@ export default async function DashboardLayout({ children }) {
         redirect("/");
       }
     }
-    console.log(session.token);
+
+    const userWApprover = await fetchUserWithApprover(session.token?.email);
+
+    if (!userWApprover.appr_email) {
+      redirect("/");
+    }
 
     return (
       <DashboardLayoutContext user={session.token} serverTime={serverTime}>

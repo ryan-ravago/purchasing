@@ -1,5 +1,7 @@
 import db, { dbConnection } from "@/app/db/db";
 
+export const dynamic = "force-dynamic";
+
 async function getDataFromDatabase(
   page,
   limit,

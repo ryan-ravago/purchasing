@@ -1,22 +1,12 @@
-import { Button } from "@/components/ui/button";
+import SetApprover from "./SetApprover";
 
-export default function Settings() {
-  return (
-    <>
-      <div
-        className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm"
-        x-chunk="dashboard-02-chunk-1"
-      >
-        <div className="flex flex-col items-center gap-1 text-center">
-          <h3 className="text-2xl font-bold tracking-tight">
-            You have no products
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            You can start selling as soon as you add a product.
-          </p>
-          <Button className="mt-4">Add Product</Button>
-        </div>
-      </div>
-    </>
-  );
+async function fetchApprovers() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/approvers`);
+  const approvers = await res.json();
+  return approvers;
+}
+
+export default async function Settings() {
+  const approvers = await fetchApprovers();
+  return <SetApprover approvers={approvers} />;
 }

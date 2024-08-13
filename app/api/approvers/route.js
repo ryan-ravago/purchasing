@@ -16,5 +16,7 @@ export async function GET() {
     connection,
   });
 
+  await connection.end();
+
   return Response.json(heads);
 }

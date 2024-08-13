@@ -39,6 +39,7 @@ async function fetchUserWithApprover(gmail) {
 export default async function DashboardLayout({ children }) {
   const session = await getServerSession(options);
   const serverTime = await ServerTime();
+  let userWApprover = null;
 
   if (session?.token.id) {
     // logging in using google
@@ -63,14 +64,18 @@ export default async function DashboardLayout({ children }) {
       }
     }
 
-    const userWApprover = await fetchUserWithApprover(session.token?.email);
+    // check user role if needs to set approver
 
-    if (!userWApprover.appr_email) {
-      redirect("/");
+    if (session.token.role === "STAFF") {
+      userWApprover = await fetchUserWithApprover(session.token?.email);
     }
 
     return (
-      <DashboardLayoutContext user={session.token} serverTime={serverTime}>
+      <DashboardLayoutContext
+        user={session.token}
+        serverTime={serverTime}
+        userWApprover={userWApprover}
+      >
         <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
           <div className="hidden border-r bg-muted/40 md:block">
             <div className="flex h-full max-h-screen flex-col gap-2">
@@ -92,7 +97,11 @@ export default async function DashboardLayout({ children }) {
                 </Button>
               </div>
               <div className="flex-1">
-                <Sidebar />
+                {session.token.role === "STAFF" ? (
+                  <Sidebar userWApprover={userWApprover} />
+                ) : (
+                  <Sidebar />
+                )}
               </div>
             </div>
           </div>

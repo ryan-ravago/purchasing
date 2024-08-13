@@ -1,14 +1,13 @@
 "use client";
 
-import { Divide, Home, NotepadText, Settings } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Home, Settings } from "lucide-react";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { useContext } from "react";
 import { UserContext } from "./DashboardLayoutContext";
 
-export default function Sidebar() {
+export default function Sidebar({ userWApprover }) {
   const pathname = usePathname();
   const user = useContext(UserContext);
 
@@ -19,7 +18,7 @@ export default function Sidebar() {
     return "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary";
   };
 
-  return (
+  const sidebar = (
     <nav className="grid items-start px-2 text-md font-medium lg:px-4">
       <Link
         href="/dashboard"
@@ -111,4 +110,14 @@ export default function Sidebar() {
       )}
     </nav>
   );
+
+  // check if user has already set approver
+  if (!userWApprover.appr_email) {
+    if (pathname === "/settings") {
+      return sidebar;
+    }
+    redirect("/settings");
+  } else {
+    return sidebar;
+  }
 }

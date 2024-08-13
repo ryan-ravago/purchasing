@@ -1,4 +1,4 @@
-import db, { dbConnection } from "@/app/db/db";
+import db, { dbConnectionPurchasing } from "@/app/db/db";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +10,7 @@ async function getDataFromDatabase(
   columnFilters
 ) {
   const offset = page * limit;
-  const connection = await dbConnection();
+  const connection = await dbConnectionPurchasing();
 
   let orderByClause = "ORDER BY req_dt DESC";
   if (sortOptions.length > 0) {

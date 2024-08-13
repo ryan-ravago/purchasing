@@ -11,7 +11,7 @@ export const dbConnectionUsers = async () => {
   return conn;
 };
 
-export const dbConnection = async () => {
+export const dbConnectionPurchasing = async () => {
   const conn = await mysql.createConnection({
     host: process.env.HOST,
     database: process.env.DATABASE,

@@ -1,8 +1,7 @@
-import db from "@/app/db/db";
-import { dbConnection } from "@/app/db/db";
+import db, { dbConnectionPurchasing } from "@/app/db/db";
 
 export async function GET(request) {
-  const connection = await dbConnection();
+  const connection = await dbConnectionPurchasing();
   const searchParams = request.nextUrl.searchParams;
   const date = searchParams.get("date");
 
@@ -28,12 +27,12 @@ export async function GET(request) {
   };
 
   const result = await generateShortUidWithDate();
-
+  await connection.end();
   return Response.json(result);
 }
 
 export async function POST(req) {
-  const connection = await dbConnection();
+  const connection = await dbConnectionPurchasing();
 
   const form = await req.json();
   const { reqId, items, reqNote, requestor, approver } = form;
